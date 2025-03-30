@@ -1,0 +1,45 @@
+import React, { useEffect, useState } from "react";
+import { db } from "./firebase";
+
+function Dashboard() {
+  const [energyData, setEnergyData] = useState({ solar: 0, wind: 0, battery: 0 });
+
+  useEffect(() => {
+    db.ref("energy").on("value", (snapshot) => {
+      if (snapshot.exists()) {
+        setEnergyData(snapshot.val());
+      }
+    });
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+      <div className="max-w-4xl w-full bg-white shadow-lg rounded-lg p-8">
+        <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">Hybrid Energy Dashboard</h1>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+          <div className="bg-blue-500 text-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold">Solar Power</h2>
+            <p className="text-2xl font-bold">{energyData.solar} W</p>
+          </div>
+
+          <div className="bg-green-500 text-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold">Wind Power</h2>
+            <p className="text-2xl font-bold">{energyData.wind} W</p>
+          </div>
+
+          <div className="bg-yellow-500 text-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold">Battery Level</h2>
+            <p className="text-2xl font-bold">{energyData.battery}%</p>
+          </div>
+        </div>
+
+        <div className="mt-8 text-center">
+          <p className="text-gray-600">Real-time monitoring of energy production and battery status.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Dashboard;
